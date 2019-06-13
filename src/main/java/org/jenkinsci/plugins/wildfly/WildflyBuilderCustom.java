@@ -35,16 +35,20 @@ public class WildflyBuilderCustom extends Builder {
     private final String username;
     private final String password;
     private final String server;
-    private final int timeout=30000;
+    private int timeout = 30000;
+    private Boolean restart = true;
 
     @DataBoundConstructor
-    public WildflyBuilderCustom(String war, String host, String port, String username, String password, String server) {
+    public WildflyBuilderCustom(String war, String host, String port, String username, String password, String server,
+        int timeout, Boolean restart) {
         this.war = war;
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
         this.server = server;
+        this.timeout = timeout;
+        this.restart = restart;
     }
 
     public String getWar() {
@@ -75,6 +79,9 @@ public class WildflyBuilderCustom extends Builder {
         return timeout;
     }
 
+    public Boolean getRestart() {
+        return restart;
+    }
 
     @Override public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
 
@@ -107,7 +114,7 @@ public class WildflyBuilderCustom extends Builder {
             CLI cli = CLI.newInstance();
             if (username.length() > 0) {
                 passwordAsCharArray = password.toCharArray();
-                cli.connect(host, portAsInt, username, passwordAsCharArray,timeout);
+                cli.connect(host, portAsInt, username, passwordAsCharArray, timeout);
             } else {
                 cli.connect(host, portAsInt, null, null);
             }
@@ -134,23 +141,19 @@ public class WildflyBuilderCustom extends Builder {
                     listener.fatalError(response);
                     return false;
                 } else {
-                    listener.getLogger().println(response + "\n reload server...");
-                    CLI.Result reloadResult = cli.cmd("reload");
-                    response = getWildFlyResponse(reloadResult);
-                    if (response.indexOf("{\"outcome\" => \"failed\"") >= 0) {
-                        listener.fatalError(response);
-                        return false;
-                    } else {
+                    if (restart) {
+                        listener.getLogger().println(response + "\n reload server...");
+                        CLI.Result reloadResult = cli.cmd("shutdown --restart=true");
+                        response = getWildFlyResponse(reloadResult);
                         try {
                             cli.disconnect();
                             listener.getLogger().println(response);
-                            Thread.currentThread().sleep(20000);
-                            cli.connect(host, portAsInt, username, password.toCharArray(),timeout);
+                            Thread.currentThread().sleep(120000);
+                            cli.connect(host, portAsInt, username, password.toCharArray(), timeout);
                         } catch (Exception e) {
                             listener.getLogger().println(e.getMessage());
                         }
                     }
-
                 }
             }
 
