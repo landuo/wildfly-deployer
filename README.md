@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-WildFly Deployer Plugin
-=====================
 
+# Wildfly deployer
 Jenkins plugin that deploys applications (WAR or EAR files) to a WildFly or JBoss EAP server or server group.
 
 Read more: [WildFly Deployer Plugin](https://wiki.jenkins-ci.org/display/JENKINS/WildFly+Deployer+Plugin)
@@ -63,6 +61,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-=======
-Init Repo
->>>>>>> 5780ee97866a4d031e9a4610b05426bf9270fb14
+
